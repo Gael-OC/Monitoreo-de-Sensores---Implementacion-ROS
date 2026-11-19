@@ -11,6 +11,10 @@
   const CONTEXTS = { dry_test: 'Prueba en seco', culture: 'En cultivo', unknown: 'Contexto desconocido' };
   const STATES = { ok: 'Recibiendo', late: 'Atrasado', stale: 'Sin datos recientes', waiting: 'Esperando señal' };
   const HIDDEN_KEY = 'microalgas.nodosOcultos';
+  // Sensors the panel shows, in this order. Only temperature and pH are installed
+  // for now; add 'oxygen' here when the digital module arrives. Storage and the
+  // CSV keep every measurement regardless of this list.
+  const SHOWN = ['temperatura', 'temperature', 'ph'];
 
   function el(tag, cls, text) {
     const node = document.createElement(tag);
@@ -42,6 +46,12 @@
   function label(key) { return NAMES[key] || key; }
   function short(key) { return SHORT[key] || key; }
   function isTemperature(key) { return key === 'temperatura' || key === 'temperature'; }
+  // [key, measurement] pairs of the sensors on screen, temperature first.
+  function readings(measurements) {
+    return Object.entries(measurements || {}).filter(([k]) => SHOWN.includes(k))
+      .sort((a, b) => SHOWN.indexOf(a[0]) - SHOWN.indexOf(b[0]));
+  }
+  function shownSensor(key) { return SHOWN.includes(key); }
   function context(value) { return CONTEXTS[value] || value || 'Sin contexto'; }
   function name(device) { return device.alias || device.device_id; }
 
@@ -175,50 +185,6 @@
     return lines.join('\n');
   }
 
-  function centered(text, width) {
-    const s = String(text).slice(0, width), left = Math.floor((width - s.length) / 2);
-    return ' '.repeat(left) + s + ' '.repeat(width - s.length - left);
-  }
-
-  // Gateway with up to six modules below it. `packet` is the seconds since a new
-  // reading was noticed; while it is short an @ climbs from the module to the gateway.
-  function network(nodes, gatewayLabel) {
-    const shown = nodes.slice(0, 6), n = shown.length;
-    const span = n ? 8 * (n - 1) + 1 : 1, W = Math.max(span + 8, 19);
-    const start = Math.floor((W - span) / 2), mid = Math.floor(W / 2), H = n ? 9 : 4;
-    const grid = Array.from({ length: H }, () => Array(W).fill(' '));
-    const put = (r, c, s) => { for (let k = 0; k < s.length; k++) if (c + k >= 0 && c + k < W) grid[r][c + k] = s[k]; };
-    put(0, mid - 7, '+-------------+');
-    put(1, mid - 7, '|' + centered('GATEWAY', 13) + '|');
-    put(2, mid - 7, '|' + centered(gatewayLabel || '', 13) + '|');
-    put(3, mid - 7, n ? '+------+------+' : '+-------------+');
-    if (!n) return grid.map(r => r.join('')).join('\n');
-    const centers = shown.map((_, k) => start + 8 * k);
-    for (let c = centers[0]; c <= centers[n - 1]; c++) grid[4][c] = '-';
-    for (const c of centers.concat(mid)) grid[4][c] = '+';
-    shown.forEach((node, k) => {
-      const c = centers[k];
-      grid[5][c] = node.state === 'stale' || node.state === 'waiting' ? ':' : '|';
-      put(6, c - 2, '+-+-+');
-      let mark = String(k + 1);
-      if (node.packet != null && node.packet < 1.4) mark = '@';
-      else if (node.state === 'late') mark = '!';
-      else if (node.state === 'stale' || node.state === 'waiting') mark = '?';
-      put(7, c - 2, '| ' + mark + ' |');
-      put(8, c - 2, '+---+');
-      if (node.packet == null) return;
-      const path = [[5, c], [4, c]];
-      for (let x = c; x !== mid; x += c < mid ? 1 : -1) path.push([4, x + (c < mid ? 1 : -1)]);
-      path.push([3, mid]);
-      const idx = Math.floor(node.packet * 14);
-      if (idx < path.length) {
-        grid[path[idx][0]][path[idx][1]] = '@';
-        if (idx > 0) grid[path[idx - 1][0]][path[idx - 1][1]] = 'o';
-      }
-    });
-    return grid.map(r => r.join('')).join('\n');
-  }
-
   // Three-row ASCII heartbeat: one peak per received reading inside the window.
   function beat(arrivals, nowMs, width, windowSeconds, state) {
     const step = windowSeconds / (width - 4);
@@ -236,7 +202,7 @@
   }
 
   window.Monitor = {
-    TZ, POLL_SECONDS, STATES, el, svg, json, number, decimals, label, short, isTemperature, context, name, source,
-    clock, ageText, status, ring, counts, summary, loadHidden, saveHidden, reducedMotion, alga, network, beat
+    TZ, POLL_SECONDS, STATES, el, svg, json, number, decimals, label, short, isTemperature, readings, shownSensor, context, name, source,
+    clock, ageText, status, ring, counts, summary, loadHidden, saveHidden, reducedMotion, alga, beat
   };
 })();

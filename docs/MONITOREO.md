@@ -98,16 +98,18 @@ Las pruebas cubren identidades, mensajes corruptos, selección por minuto, puntu
 
 Cada ruta ocupa una pantalla completa, sin desplazar la página; lo que no cabe se desplaza dentro de su propio recuadro. En pantallas angostas (menos de 960 px) o bajas (menos de 640 px) vuelve a ser una página normal.
 
-- `/` En vivo: microalga ASCII que refleja el estado de los nodos visibles, una tarjeta compacta por nodo, red de sensores, escala de pH y señales entrantes.
-- `/nodos`: tarjetas completas con anillo de próxima señal, tendencia de 24 h (promedio por hora), mínimo y máximo de 24 h, cobertura de la hora en curso y configuración. Incluye el intervalo esperado (`expected_interval_seconds`).
-- `/historial`: filtros, gráficos con banda mínimo–máximo por hora y tabla. Acepta `?nodo=<gateway>:<dispositivo>`.
-- `/pared`: modo TV oscuro, pensado para 1920×1080 y escalable. Muestra hasta seis nodos; `?nodos=ID1,ID2` fija cuáles.
+- `/` En vivo: microalga ASCII que refleja el estado de los nodos visibles, una tarjeta compacta por nodo, red de sensores (diagrama SVG: un punto sube al gateway solo cuando llega una lectura real), escala y lista de pH por nodo y señales entrantes (se precargan los últimos 30 minutos).
+- `/nodos`: tarjetas completas con anillo de próxima señal, un gráfico de 24 h por sensor (promedio por hora con banda mínimo–máximo, ejes con valores y detalle al pasar el mouse), cobertura de la hora en curso y configuración. Incluye el intervalo esperado (`expected_interval_seconds`).
+- `/historial`: filtros (Resolución y Vista son controles segmentados), gráficos que ocupan el alto disponible con ejes, banda mínimo–máximo por hora y detalle al pasar el mouse o con las flechas del teclado, y tabla con una columna por sensor. Acepta `?nodo=<gateway>:<dispositivo>`.
+- `/pared`: modo TV oscuro, pensado para 1920×1080. La escala sigue el lado más corto de la pantalla, así que también cabe en ventanas anchas y bajas. Muestra hasta seis nodos; `?nodos=ID1,ID2` fija cuáles.
+
+Por ahora el panel muestra solo temperatura y pH, los sensores instalados. La lista está en `SHOWN` de `monitoring/static/comun.js`; agregar `oxygen` ahí cuando llegue el módulo digital. El almacenamiento y el CSV conservan todas las mediciones.
 
 La selección de nodos visibles se guarda en el navegador (`localStorage`) y la comparten las cuatro rutas de ese mismo navegador. Estados: «Recibiendo», «Atrasado» (más de 1,5 veces el intervalo más el ciclo de consulta), «Sin datos recientes» (la misma regla que `recent` en la API) y «Esperando señal». La CSP solo permite estilos y scripts propios, así que no hay estilos en línea ni fuentes externas. Las animaciones se detienen si el sistema pide reducir movimiento.
 
 ## Rendimiento del navegador
 
-Los cambios de filtros cancelan la solicitud anterior y muestran carga inmediata. El gráfico conserva la serie completa; para más de 240 puntos dibuja una línea SVG sin miles de círculos individuales. La tabla muestra los últimos 200 registros, con aviso explícito; el CSV incluye todo el rango seleccionado.
+Los cambios de filtros cancelan la solicitud anterior y muestran carga inmediata. El gráfico conserva la serie completa y se dibuja al tamaño real de su recuadro; solo marca puntos individuales cuando hay espacio para distinguirlos. Se actualiza en su lugar cada 10 s sin perder el detalle bajo el mouse. La tabla muestra los últimos 200 registros, con aviso explícito; el CSV incluye todo el rango seleccionado.
 
 ## Prueba de cola realizada
 
@@ -115,7 +117,7 @@ Se usó una copia SQLite aislada con lecturas reales y una URI Mongo hacia un pu
 
 ## Captura limitada a la placa USB
 
-En el laboratorio está configurado `MONITOR_DEVICE_IDS=240AC460C8E0` en `monitoring/.env`. El recolector ignora los mensajes de otros IDs y el panel oculta esos módulos del gateway local. El historial anterior permanece almacenado, sin nuevos registros del módulo excluido. Vaciar esta variable vuelve a admitir todos los dispositivos; reiniciar API y recolector después de cambiarla.
+En el laboratorio está configurado `MONITOR_DEVICE_IDS=240AC460C8E0,CC7B5CF1E3CC` en `monitoring/.env` (las dos placas del laboratorio; desde el 19-11-2026, antes solo la primera). Ambas se conectan por WiFi al punto de acceso `lab-ros` del PC (10.42.0.1); el ID es la MAC de la placa. El recolector ignora los mensajes de otros IDs y el panel oculta esos módulos del gateway local. El historial anterior permanece almacenado, sin nuevos registros del módulo excluido. Vaciar esta variable vuelve a admitir todos los dispositivos; reiniciar API y recolector después de cambiarla.
 
 ## WiFi antes de recompilar
 

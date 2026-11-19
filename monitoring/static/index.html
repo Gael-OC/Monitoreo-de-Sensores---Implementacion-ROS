@@ -60,9 +60,14 @@
         <span id="net-label" class="white-pill">—</span>
       </div>
       <div id="net-wrap" class="net-wrap" role="img" aria-label="Red de sensores">
-        <pre id="net" class="ascii ascii-net" aria-hidden="true"></pre>
+        <svg id="net" class="net-svg" aria-hidden="true"></svg>
       </div>
-      <p class="hint"><code>@</code> lectura nueva subiendo al gateway · <code>!</code> atrasado · <code>?</code> sin datos</p>
+      <ul class="net-legend" aria-hidden="true">
+        <li><i class="lg-ok"></i>Recibiendo</li>
+        <li><i class="lg-late"></i>Atrasado</li>
+        <li><i class="lg-stale"></i>Sin datos</li>
+        <li><i class="lg-packet"></i>Lectura nueva</li>
+      </ul>
     </section>
 
     <section class="soft-card ph-card" aria-labelledby="ph-title">
@@ -71,6 +76,7 @@
           <h2 id="ph-title">pH entre nodos</h2>
           <p id="ph-caption">Ningún nodo visible con pH reciente</p>
         </div>
+        <ul id="ph-list" class="ph-list" aria-hidden="true"></ul>
         <strong id="ph-range" class="big-number">—</strong>
       </div>
       <div id="ph-scale" class="ph-scale" role="img" aria-label="Escala de pH">

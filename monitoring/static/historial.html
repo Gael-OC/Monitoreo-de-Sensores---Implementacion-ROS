@@ -32,14 +32,26 @@
     <label>Desde<input type="date" id="start" required></label>
     <label>Hasta (incluido)<input type="date" id="end" required></label>
     <label>Contexto<select id="context"><option value="">Todos, separados</option><option value="dry_test">Prueba en seco</option><option value="culture">En cultivo</option><option value="unknown">Desconocido</option></select></label>
-    <label>Resolución<select id="resolution"><option value="hour">Por hora</option><option value="minute">Por minuto · 7 días</option></select></label>
-    <label>Vista<select id="mode"><option value="summary">Resumen horario</option><option value="point">Lectura puntual</option></select></label>
-    <button class="primary">Aplicar filtros</button>
+    <div class="field" role="radiogroup" aria-labelledby="resolution-label">
+      <span id="resolution-label">Resolución</span>
+      <div class="seg">
+        <label><input type="radio" name="resolution" value="hour" checked><span>Por hora</span></label>
+        <label title="Las lecturas por minuto se conservan 7 días"><input type="radio" name="resolution" value="minute"><span>Por minuto · 7 d</span></label>
+      </div>
+    </div>
+    <div class="field" role="radiogroup" aria-labelledby="mode-label">
+      <span id="mode-label">Vista</span>
+      <div class="seg">
+        <label title="Promedio, mínimo y máximo de cada hora"><input type="radio" name="mode" value="summary" checked><span>Resumen</span></label>
+        <label title="Primera lectura del primer minuto de cada hora"><input type="radio" name="mode" value="point"><span>Puntual</span></label>
+      </div>
+    </div>
+    <button class="primary">Aplicar</button>
   </form>
   <p id="history-status" role="status">Selecciona un módulo para consultar.</p>
   <div class="history-body">
     <div id="charts" class="charts" aria-label="Gráficos"></div>
-    <div class="table-wrap"><table><thead><tr><th>Fecha · Chile</th><th>Contexto</th><th>Mediciones</th><th>Cobertura</th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="table-wrap"><table class="history-table"><thead id="rows-head"><tr><th>Fecha · Chile</th><th>Contexto</th><th>Mediciones</th></tr></thead><tbody id="rows"></tbody></table></div>
   </div>
 </main>
 

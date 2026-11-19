@@ -63,7 +63,9 @@ async function loadBeats() {
 
 function buildTile() {
   const root = M.el('article', 'tile');
-  const head = M.el('div', 'tile-head'), titles = M.el('div'), name = M.el('h2'), sub = M.el('span', 'tile-sub');
+  const head = M.el('div', 'tile-head'), titles = M.el('div', 'tile-titles'), name = M.el('h2', 'tile-name');
+  const sub = M.el('div', 'tile-sub'), id = M.el('span', 'tile-id'), ctx = M.el('span', 'tile-ctx');
+  sub.append(id, ctx);
   titles.append(name, sub);
   const pill = M.el('span', 'tile-pill'), pillText = M.el('span');
   pill.append(M.el('span', 'state-dot'), pillText);
@@ -72,11 +74,11 @@ function buildTile() {
   const bottom = M.el('div', 'tile-bottom'), bar = M.el('div', 'tile-bar'), fill = M.el('div');
   bar.setAttribute('role', 'img');
   bar.append(fill);
-  const foot = M.el('div', 'tile-foot'), age = M.el('span'), next = M.el('span');
+  const foot = M.el('div', 'tile-foot'), age = M.el('span'), next = M.el('span', 'tile-next');
   foot.append(age, next);
   bottom.append(bar, foot);
   root.append(head, values, bottom);
-  return { root, name, sub, pillText, values, bar, fill, age, next };
+  return { root, name, id, ctx, pillText, values, bar, fill, age, next };
 }
 
 function renderTiles() {
@@ -92,13 +94,18 @@ function renderTiles() {
     if (!t) { t = buildTile(); tiles.set(d._id, t); }
     t.device = d;
     t.name.textContent = M.name(d);
-    t.sub.textContent = d.device_id + ' · ' + M.context(d.latest?.context || d.context);
-    t.values.replaceChildren(...Object.entries(d.latest?.measurements || {}).slice(0, 2).map(([k, m]) => {
-      const value = M.el('div', 'tile-value'), strong = M.el('strong', '', m.quality === 'invalid' ? '—' : M.number(m.value, M.decimals(k)));
-      if (m.unit && m.unit !== 'pH' && m.quality !== 'invalid') strong.append(M.el('em', '', m.unit));
-      value.append(M.el('span', '', M.label(k) + (m.quality === 'invalid' ? ' · sin lectura válida' : '')), strong);
+    const context = d.latest?.context || d.context;
+    t.id.textContent = d.device_id;
+    t.ctx.textContent = M.context(context);
+    t.ctx.dataset.context = context || 'unknown';
+    const entries = M.readings(d.latest?.measurements).slice(0, 2);
+    t.values.replaceChildren(...(entries.length ? entries.map(([k, m]) => {
+      const value = M.el('div', 'tile-value'), number = M.el('span', 'tile-number');
+      number.append(M.el('strong', '', m.quality === 'invalid' ? '—' : M.number(m.value, M.decimals(k))));
+      if (m.unit && m.unit !== 'pH' && m.quality !== 'invalid') number.append(M.el('em', 'tile-unit', m.unit));
+      value.append(M.el('span', 'tile-label', M.label(k) + (m.quality === 'invalid' ? ' · sin lectura válida' : '')), number);
       return value;
-    }));
+    }) : [M.el('p', 'tile-wait', 'Sin mediciones todavía')]));
     if (box.children[i] !== t.root) box.insertBefore(t.root, box.children[i] || null);
     let row = beatRows.get(d._id);
     if (!row) {
@@ -159,7 +166,8 @@ function measure() {
   const rows = Math.max(16, Math.min(56, Math.floor(art.clientHeight / lineH) - 1));
   const cols = Math.max(32, Math.min(Math.floor(art.clientWidth / charW) - 2, Math.round(rows * 2.1)));
   algaSize = { cols, rows: Math.min(rows, Math.floor(cols / 1.8)) };
-  const beatsBox = $('beats'), label = 9 * parseFloat(getComputedStyle(document.body).fontSize) + 24;
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  const beatsBox = $('beats'), label = 13.25 * rem + 8;
   const beatSize = parseFloat(getComputedStyle(pre).fontSize) || 11;
   beatWidth = Math.max(40, Math.floor((beatsBox.clientWidth - label) / (beatSize * 0.6)) - 2);
 }
