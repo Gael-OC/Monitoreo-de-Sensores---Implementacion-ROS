@@ -1,3 +1,5 @@
+> **Nueva plataforma ligera:** consulta [instalación, operación y API](docs/MONITOREO.md). Admite respaldo local, historial horario y separación de pruebas en seco. El contenido siguiente documenta el sistema original.
+
 # 📡 IoT Gateway Monitoring System — ROS 2 + ESP32
 
 <div align="center">

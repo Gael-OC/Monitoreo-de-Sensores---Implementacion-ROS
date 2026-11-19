@@ -153,3 +153,9 @@ dump/
 
 
 scripts/telegram/*.json
+
+# Portable monitor runtime
+.monitoring/
+
+# Generated WiFi defaults contain private credentials
+**/.wifi-sdkconfig.defaults

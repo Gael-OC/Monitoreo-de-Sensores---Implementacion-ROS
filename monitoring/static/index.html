@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Microalgas · En vivo</title>
+<link rel="stylesheet" href="/static/style.css">
+<script defer src="/static/comun.js"></script>
+<script defer src="/static/app.js"></script>
+</head>
+<body class="panel" data-page="vivo">
+<div class="frame">
+
+<header class="topbar">
+  <div class="brand"><span class="brand-pill">MICROALGAS</span><span class="brand-sub">Monitoreo de nodos ESP32</span></div>
+  <nav class="tabs" aria-label="Secciones">
+    <a href="/" aria-current="page">En vivo</a>
+    <a href="/nodos">Nodos</a>
+    <a href="/historial">Historial</a>
+    <a href="/pared">Modo pared</a>
+  </nav>
+  <div id="connection" class="status-pill" role="status"><span class="live-dot" aria-hidden="true"></span><span id="connection-text">Conectando…</span></div>
+</header>
+
+<section class="selector" aria-labelledby="selector-label">
+  <span id="selector-label" class="selector-label">Nodos en pantalla</span>
+  <div id="chips" class="chips"></div>
+  <span id="visible-count" class="selector-count"></span>
+  <button type="button" id="show-all" class="ghost" hidden>Mostrar todos</button>
+</section>
+
+<main class="screen vivo">
+  <div class="vivo-left">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-glow hero-glow-a" aria-hidden="true"></div>
+      <div class="hero-glow hero-glow-b" aria-hidden="true"></div>
+      <div id="alga-wrap" class="hero-art" role="img" aria-label="Microalga animada">
+        <pre id="alga" class="ascii ascii-alga" aria-hidden="true"></pre>
+      </div>
+      <div class="hero-title"><h1 id="hero-title">Cultivo<br>en vivo</h1></div>
+      <div id="hero-tags" class="hero-tags"></div>
+      <div class="hero-pills">
+        <span class="glass-pill"><span class="live-dot" aria-hidden="true"></span><span id="hero-status">Esperando señales</span></span>
+        <span class="glass-pill" id="last-signal">Esperando la primera señal</span>
+      </div>
+      <a href="/historial" class="cta">Ver historial
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      </a>
+    </section>
+    <section class="strip" aria-label="Estado de los nodos en pantalla">
+      <div id="strip" class="strip-grid"></div>
+      <p id="strip-empty" class="strip-empty" hidden>Esperando la primera señal de los ESP32.</p>
+    </section>
+  </div>
+
+  <div class="vivo-right">
+    <section class="soft-card net-card" aria-labelledby="net-title">
+      <div class="soft-head">
+        <h2 id="net-title">Red de <span class="accent">sensores</span></h2>
+        <span id="net-label" class="white-pill">—</span>
+      </div>
+      <div id="net-wrap" class="net-wrap" role="img" aria-label="Red de sensores">
+        <pre id="net" class="ascii ascii-net" aria-hidden="true"></pre>
+      </div>
+      <p class="hint"><code>@</code> lectura nueva subiendo al gateway · <code>!</code> atrasado · <code>?</code> sin datos</p>
+    </section>
+
+    <section class="soft-card ph-card" aria-labelledby="ph-title">
+      <div class="ph-text">
+        <div>
+          <h2 id="ph-title">pH entre nodos</h2>
+          <p id="ph-caption">Ningún nodo visible con pH reciente</p>
+        </div>
+        <strong id="ph-range" class="big-number">—</strong>
+      </div>
+      <div id="ph-scale" class="ph-scale" role="img" aria-label="Escala de pH">
+        <div class="ph-inner">
+          <div id="ph-ticks"></div>
+          <div class="ph-bar" aria-hidden="true"></div>
+          <div id="ph-marks"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="terminal" aria-labelledby="log-title">
+      <div class="terminal-head"><h2 id="log-title">Señales entrantes</h2><span class="terminal-live"><span class="live-dot" aria-hidden="true"></span>EN VIVO</span></div>
+      <pre id="log" class="terminal-log" role="log" aria-labelledby="log-title">Esperando lecturas…</pre>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <span>Fechas en America/Santiago · Sin control de actuadores · Las señales en seco son datos de prueba</span>
+  <span>La conexión no garantiza la exactitud de los sensores</span>
+</footer>
+</div>
+</body>
+</html>

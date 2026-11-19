@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Microalgas · Historial</title>
+<link rel="stylesheet" href="/static/style.css">
+<script defer src="/static/comun.js"></script>
+<script defer src="/static/app.js"></script>
+</head>
+<body class="panel" data-page="historial">
+<div class="frame">
+
+<header class="topbar">
+  <div class="brand"><span class="brand-pill">MICROALGAS</span><span class="brand-sub">Monitoreo de nodos ESP32</span></div>
+  <nav class="tabs" aria-label="Secciones">
+    <a href="/">En vivo</a>
+    <a href="/nodos">Nodos</a>
+    <a href="/historial" aria-current="page">Historial</a>
+    <a href="/pared">Modo pared</a>
+  </nav>
+  <div id="connection" class="status-pill" role="status"><span class="live-dot" aria-hidden="true"></span><span id="connection-text">Conectando…</span></div>
+</header>
+
+<main class="screen history-screen" aria-labelledby="historial-title">
+  <div class="page-head">
+    <div><span class="eyebrow">EXPLORA LAS MEDICIONES</span><h1 id="historial-title" class="page-title">Historial</h1></div>
+    <a id="download" class="button" href="#" aria-disabled="true">Descargar CSV</a>
+  </div>
+  <form id="filters" class="filters">
+    <label>Módulo<select id="device" required></select></label>
+    <label>Desde<input type="date" id="start" required></label>
+    <label>Hasta (incluido)<input type="date" id="end" required></label>
+    <label>Contexto<select id="context"><option value="">Todos, separados</option><option value="dry_test">Prueba en seco</option><option value="culture">En cultivo</option><option value="unknown">Desconocido</option></select></label>
+    <label>Resolución<select id="resolution"><option value="hour">Por hora</option><option value="minute">Por minuto · 7 días</option></select></label>
+    <label>Vista<select id="mode"><option value="summary">Resumen horario</option><option value="point">Lectura puntual</option></select></label>
+    <button class="primary">Aplicar filtros</button>
+  </form>
+  <p id="history-status" role="status">Selecciona un módulo para consultar.</p>
+  <div class="history-body">
+    <div id="charts" class="charts" aria-label="Gráficos"></div>
+    <div class="table-wrap"><table><thead><tr><th>Fecha · Chile</th><th>Contexto</th><th>Mediciones</th><th>Cobertura</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </div>
+</main>
+
+<footer class="foot">
+  <span>Fechas en America/Santiago · Datos internos en UTC · No se rellenan intervalos sin señal</span>
+  <span>El CSV incluye todo el rango seleccionado</span>
+</footer>
+</div>
+</body>
+</html>
