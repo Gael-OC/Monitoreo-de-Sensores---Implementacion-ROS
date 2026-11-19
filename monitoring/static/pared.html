@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Microalgas · Modo pared</title>
+<link rel="stylesheet" href="/static/style.css">
+<script defer src="/static/comun.js"></script>
+<script defer src="/static/pared.js"></script>
+</head>
+<body class="pared">
+<div class="wall">
+  <header class="wall-top">
+    <div class="wall-brand"><strong>MICROALGAS</strong><span class="wall-live"><span class="live-dot" aria-hidden="true"></span>EN VIVO</span></div>
+    <span id="clock" class="wall-clock">--:--:--</span>
+    <div class="wall-right"><strong id="wall-connection" role="status">Conectando…</strong><span id="wall-date"></span></div>
+  </header>
+  <main class="wall-main">
+    <section class="wall-hero" aria-labelledby="wall-count">
+      <div id="wall-art" class="wall-art" role="img" aria-label="Microalga animada"><pre id="alga" class="ascii" aria-hidden="true"></pre></div>
+      <div class="wall-hero-foot"><h1 id="wall-count">Conectando…</h1><p id="wall-alerts" class="wall-alerts"></p></div>
+    </section>
+    <div id="tiles" class="wall-tiles"></div>
+  </main>
+  <section class="wall-beat" aria-labelledby="beat-title">
+    <div class="wall-beat-head"><h2 id="beat-title">LATIDO DE SEÑALES · ÚLTIMOS 5 MIN</h2><span>Cada pico es una lectura recibida (como máximo una por minuto) · los tramos planos son minutos sin señal</span></div>
+    <div id="beats" role="img" aria-label="Lecturas recibidas en los últimos 5 minutos"></div>
+  </section>
+</div>
+<a class="wall-exit" href="/">Volver al panel</a>
+</body>
+</html>

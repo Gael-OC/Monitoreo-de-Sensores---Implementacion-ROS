@@ -1,8 +1,19 @@
-# The following lines of boilerplate have to be in your project's
-# CMakeLists in this exact order for cmake to work correctly
 cmake_minimum_required(VERSION 3.16)
 
+# Prepare credentials BEFORE project.cmake reads sdkconfig; component configuration is too late.
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
+set(WIFI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/main/versions/wifi")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${WIFI_DIR}/.env" "${WIFI_DIR}/generate_wifi_config.py")
+execute_process(COMMAND "${Python3_EXECUTABLE}" "${WIFI_DIR}/generate_wifi_config.py" RESULT_VARIABLE WIFI_RESULT)
+if(NOT WIFI_RESULT EQUAL 0)
+    message(FATAL_ERROR "No se pudo preparar WiFi desde main/versions/wifi/.env")
+endif()
+if(NOT DEFINED SDKCONFIG_DEFAULTS)
+    set(SDKCONFIG_DEFAULTS "")
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/sdkconfig.defaults")
+        list(APPEND SDKCONFIG_DEFAULTS "${CMAKE_CURRENT_SOURCE_DIR}/sdkconfig.defaults")
+    endif()
+endif()
+list(APPEND SDKCONFIG_DEFAULTS "${CMAKE_CURRENT_SOURCE_DIR}/.wifi-sdkconfig.defaults")
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-# "Trim" the build. Include the minimal set of components, main, and anything it depends on.
-#idf_build_set_property(MINIMAL_BUILD ON)
 project(hello_world)

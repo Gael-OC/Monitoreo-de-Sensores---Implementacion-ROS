@@ -50,7 +50,8 @@ void micro_ros_task(void *arg)
     
     // Loop principal: priorizar procesamiento de comandos de motor
     sensor_data_t data;
-    uint32_t last_publish_time = 0;
+    // Publicar al iniciar y luego cada minuto, sin esperar un minuto para la primera señal.
+    uint32_t last_publish_time = (uint32_t)(xTaskGetTickCount() * portTICK_PERIOD_MS) - PUBLISH_INTERVAL_MS;
     uint32_t last_ping_time    = 0;
 
     while (1) {

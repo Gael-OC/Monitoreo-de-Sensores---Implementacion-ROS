@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Microalgas · Nodos</title>
+<link rel="stylesheet" href="/static/style.css">
+<script defer src="/static/comun.js"></script>
+<script defer src="/static/app.js"></script>
+</head>
+<body class="panel" data-page="nodos">
+<div class="frame">
+
+<header class="topbar">
+  <div class="brand"><span class="brand-pill">MICROALGAS</span><span class="brand-sub">Monitoreo de nodos ESP32</span></div>
+  <nav class="tabs" aria-label="Secciones">
+    <a href="/">En vivo</a>
+    <a href="/nodos" aria-current="page">Nodos</a>
+    <a href="/historial">Historial</a>
+    <a href="/pared">Modo pared</a>
+  </nav>
+  <div id="connection" class="status-pill" role="status"><span class="live-dot" aria-hidden="true"></span><span id="connection-text">Conectando…</span></div>
+</header>
+
+<section class="selector" aria-labelledby="selector-label">
+  <span id="selector-label" class="selector-label">Nodos en pantalla</span>
+  <div id="chips" class="chips"></div>
+  <span id="visible-count" class="selector-count"></span>
+  <button type="button" id="show-all" class="ghost" hidden>Mostrar todos</button>
+</section>
+
+<main class="screen nodos-screen" aria-labelledby="nodos-title">
+  <div class="page-head">
+    <h1 id="nodos-title" class="page-title">Nodos</h1>
+    <small>Se actualiza cada 10 s · tendencia = promedio por hora de las últimas 24 h · los huecos son horas sin datos</small>
+  </div>
+  <div id="devices" class="node-grid"></div>
+  <p id="empty" class="empty" hidden>Esperando la primera señal. El historial seguirá disponible aunque un módulo deje de transmitir.</p>
+  <p id="none-visible" class="empty" hidden>No hay nodos en pantalla. Elige al menos uno en la barra de arriba.</p>
+</main>
+
+<footer class="foot">
+  <span>Fechas en America/Santiago · Sin control de actuadores · Las señales en seco son datos de prueba</span>
+  <span>La conexión no garantiza la exactitud de los sensores</span>
+</footer>
+</div>
+
+<dialog id="editor">
+  <form id="edit-form">
+    <h2>Configurar módulo</h2>
+    <label>Alias<input id="alias" required maxlength="80"></label>
+    <label>Ubicación<input id="location" maxlength="160"></label>
+    <label>Contexto de nuevas muestras<select id="edit-context"><option value="dry_test">Prueba en seco</option><option value="culture">En cultivo</option><option value="unknown">Desconocido</option></select></label>
+    <label>Intervalo esperado entre lecturas (s)<input id="interval" type="number" min="1" max="86400" step="1" inputmode="numeric"></label>
+    <p>El intervalo define el anillo de próxima señal y cuándo un módulo pasa a «sin datos» (3 veces el intervalo, mínimo 30 s). El contexto afecta solo a nuevas muestras. No valida la calibración.</p>
+    <div class="actions"><button type="button" id="cancel" class="ghost">Cancelar</button><button class="primary">Guardar</button></div>
+    <p id="edit-error" role="alert"></p>
+  </form>
+</dialog>
+</body>
+</html>

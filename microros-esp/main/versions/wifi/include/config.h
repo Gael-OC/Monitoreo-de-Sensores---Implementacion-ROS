@@ -58,7 +58,7 @@
 // CONFIGURACIÓN DE PUBLICACIÓN
 // ========================================
 
-#define PUBLISH_INTERVAL_MS 4000
+#define PUBLISH_INTERVAL_MS 60000  // Una publicación por minuto
 
 // ========================================
 // CONFIGURACIÓN DE RED / MONITOR WIFI
